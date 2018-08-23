@@ -24,6 +24,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (Build.VERSION.SDK_INT >= 21) {
             View decorView = getWindow().getDecorView();
             int option = View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
@@ -36,26 +37,29 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
-//
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            Log.d("BaseActivity", "Build.VERSION.SDK_INT: P");
             WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
             layoutParams.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
             getWindow().setAttributes(layoutParams);
         }
 
-        getNotchParams();
+        getCutParams();
 
     }
 
+    //获取刘海高度
+    abstract void getDisplayCutoutHeight(int height);
+
     @TargetApi(28)
-    public void getNotchParams() {
+    public void getCutParams() {
         final View decorView = getWindow().getDecorView();
         decorView.post(new Runnable() {
             @Override
             public void run() {
                 DisplayCutout displayCutout = decorView.getRootWindowInsets().getDisplayCutout();
-                if (displayCutout == null){
+                if (displayCutout == null) {
+                    Log.e("TAG", "不是刘海屏");
                     return;
                 }
                 Log.e("TAG", "安全区域距离屏幕左边的距离 SafeInsetLeft:" + displayCutout.getSafeInsetLeft());
@@ -77,7 +81,5 @@ public abstract class BaseActivity extends AppCompatActivity {
             }
         });
     }
-
-    abstract void getDisplayCutoutHeight(int height);
 
 }
